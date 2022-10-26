@@ -1,0 +1,119 @@
+<%- include('../template/header'); %>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1><%= heading %></h1>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <!-- SELECT2 EXAMPLE -->
+      <div class="card card-default">
+
+        <!-- /.card-header -->
+        <div class="card-body">
+          <div class="row" id="divToPrint">
+            <div class="col-md-12">
+              <table id="example2" class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <!-- <th></th> -->
+                    <th>#</th>
+                    <th>Customer <br>Name</th>
+                    <th>Account <br>Name</th>
+                    <th>Sector</th>
+                    <th>LF No</th>
+                    <th>Received <br>Amount</th>
+                    <th>Collection <br>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% var i=1; 
+                  if(loan_data){
+                  loan_data.forEach((dt)=> { %>
+                  <tr>
+                    <td><%= i; %></td>
+                    <td><%= dt.cust_name; %></td>
+                    <td><%= dt.loan_acc_name; %></td>
+                    <td><%= dt.sector; %></td>
+                    <td><%= dt.lf_no; %></td>
+                    <td><%= dt.r_amt; %></td>
+                    <td><%= new Date(dt.updated_dt).toLocaleString('en-IN'); %></td>
+                  </tr>
+                  <% i++; })}else{ %>
+                  <td colspan="6" class="text-center">No Data Found</td>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <center><button type="button" class="btn btn-outline-success mt-4" onclick="printDiv()">Print</button></center>
+        </div>
+      </div>
+      <!-- /.card -->
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include('../template/footer'); %>
+
+<script>
+  $(function() {
+    // $("#example1").DataTable({
+    // "responsive": true, "lengthChange": false, "autoWidth": false,
+    // "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    // }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script>
+<script>
+  function printDiv() {
+
+    var divToPrint = document.getElementById('divToPrint');
+
+    var WindowObject = window.open('', 'Print-Window');
+    WindowObject.document.open();
+    WindowObject.document.writeln('<!DOCTYPE html>');
+    WindowObject.document.writeln('<html><head><title></title><style type="text/css">');
+
+
+    WindowObject.document.writeln('@media print { .center { text-align: center;}' +
+      '                                         .inline { display: inline; }' +
+      '                                         .underline { text-decoration: underline; }' +
+      '                                         .left { margin-left: 315px;} ' +
+      '                                         .right { margin-right: 375px; display: inline; }' +
+      '                                          table { border-collapse: collapse; font-size: 10px;}' +
+      '                                          th, td { border: 1px solid black; border-collapse: collapse; padding: 6px;}' +
+      '                                           th, td { }' +
+      '                                         .border { border: 1px solid black; } ' +
+      '                                         .bottom { bottom: 5px; width: 100%; position: fixed ' +
+      '                                       ' +
+      ' } .pagination{display:none;} .dataTables_info{display:none;} } </style>');
+    WindowObject.document.writeln('</head><body onload="window.print()">');
+    WindowObject.document.writeln(divToPrint.innerHTML);
+    WindowObject.document.writeln('</body></html>');
+    WindowObject.document.close();
+    setTimeout(function() {
+      WindowObject.close();
+    }, 10);
+
+  }
+</script>

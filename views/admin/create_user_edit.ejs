@@ -1,0 +1,404 @@
+<%- include('../template/header'); %>
+<style>
+  #loader {
+    /* width: 600px; */
+    height: 450px;
+    margin: auto;
+  }
+
+  #loader.loading {
+    background: url(/dist/img/loader1.gif) no-repeat center center;
+    /* width: 32px; */
+    margin: auto;
+  }
+</style>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1><%= heading %></h1>
+        </div>
+      </div>
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div id="loader" class="loading img-center" style="display: none"></div>
+      <% if(message){ %>
+      <div
+        class="alert alert-<%= message.type; %> alert-dismissible fade show"
+        role="alert"
+      >
+        <strong><%= message.message; %></strong>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <% } %>
+      <!-- SELECT2 EXAMPLE -->
+      <div class="card card-default" id="display-content">
+        <div class="card-header">
+          <h3 class="card-title"><%= sub_heading %></h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <form action="/tnx_srch" method="post">
+            <div class="row">
+              <div class="col-md-5">
+                <div class="form-group row">
+                  <label for="user_id" class="col-sm-2 col-form-label"
+                    >UserID</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="user_id"
+                      name="user_id"
+                      placeholder="UserID"
+                      value="<%= user_data ? user_data.user_id : '' %>"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="form-group row">
+                  <label for="user_type" class="col-sm-2 col-form-label"
+                    >Type</label
+                  >
+                  <div class="col-sm-10">
+                    <select
+                      name="user_type"
+                      id="user_type"
+                      class="form-control select2"
+                    >
+                      <option>Select One</option>
+                      <option value="A">Admin</option>
+                      <option value="U">User</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5">
+                <div class="form-group row">
+                  <label for="password" class="col-sm-2 col-form-label"
+                    >Password</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="password"
+                      name="password"
+                      placeholder="Password"
+                      value="<%= user_data ? user_data.password : '' %>"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="form-group row">
+                  <label for="re_password" class="col-sm-2 col-form-label"
+                    >Re-Password</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="re_password"
+                      class="form-control"
+                      id="re_password"
+                      name="re_password"
+                      placeholder="re_Password"
+                      value="<%= user_data ? user_data.password : '' %>"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5">
+                <div class="form-group row">
+                  <label for="ardb_id" class="col-sm-2 col-form-label"
+                    >ARDB</label
+                  >
+                  <div class="col-sm-10">
+                    <select
+                      name="ardb_id"
+                      id="ardb_id"
+                      class="form-control select2"
+                    >
+                      <option>Select One</option>
+                      <% if(ardb_list){ var selected = '';
+                      ardb_list.forEach((dt) => { if(user_data){
+                      if(user_data.ardb_id == dt.ardb_code) selected =
+                      'selected'; else selected = ''; } %>
+                      <option value="<%= dt.ardb_code %>" <%= selected %>
+                        > <%= dt.ardb_name %>
+                      </option>
+                      <% }) } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="form-group row">
+                  <label for="block_id" class="col-sm-2 col-form-label"
+                    >Block</label
+                  >
+                  <div class="col-sm-10">
+                    <select
+                      name="block_id"
+                      id="block_id"
+                      class="form-control select2"
+                    >
+                      <option>Select One</option>
+                      <% if(block_list){ var selected = '';
+                      block_list.forEach((dt) => { if(user_data){
+                      if(user_data.block_id == dt.block_id) selected =
+                      'selected'; else selected = ''; } %>
+                      <option value="<%= dt.block_id %>" <%= selected %>
+                        > <%= dt.block_name %>
+                      </option>
+                      <% }) } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5">
+                <div class="form-group row">
+                  <label for="sa_id" class="col-sm-2 col-form-label"
+                    >Service Area</label
+                  >
+                  <div class="col-sm-10">
+                    <select
+                      name="sa_id"
+                      id="sa_id"
+                      class="form-control select2"
+                    >
+                      <option>Select One</option>
+                      <% if(sa_list){ var selected = ''; sa_list.forEach((dt) =>
+                      { if(user_data){ if(user_data.sa_id == dt.sa_id) selected
+                      = 'selected'; else selected = ''; } %>
+                      <option value="<%= dt.sa_id %>" <%= selected %>
+                        > <%= dt.sa_name %>
+                      </option>
+                      <% }) } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="form-group row">
+                  <label for="vill_id" class="col-sm-2 col-form-label"
+                    >Village</label
+                  >
+                  <div class="col-sm-10">
+                    <select
+                      name="vill_id"
+                      id="vill_id"
+                      class="form-control select2"
+                    >
+                      <option>Select One</option>
+                      <% if(vill_list){ var selected = '';
+                      vill_list.forEach((dt) => { if(user_data){
+                      if(user_data.vill_id == dt.vill_id) selected = 'selected';
+                      else selected = ''; } %>
+                      <option value="<%= dt.vill_id %>" <%= selected %>
+                        > <%= dt.vill_name %>
+                      </option>
+                      <% }) } %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5">
+                <div class="form-group row">
+                  <label for="user_name" class="col-sm-2 col-form-label"
+                    >Name</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="user_name"
+                      name="user_name"
+                      placeholder="Full Name"
+                      value="<%= user_data ? user_data.user_name : '' %>"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="form-group row">
+                  <label for="email_id" class="col-sm-2 col-form-label"
+                    >Email ID</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="email_id"
+                      name="email_id"
+                      placeholder="Email Id"
+                      value="<%= user_data ? user_data.email_id : '' %>"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <center>
+              <button
+                type="submit"
+                class="btn btn-outline-success mt-4"
+                id="submit"
+              >
+                Save
+              </button>
+            </center>
+          </form>
+        </div>
+      </div>
+      <!-- /.card -->
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include('../template/footer'); %>
+
+<script>
+  $("#ardb_id").on("change", function () {
+    var ardb_id = $(this).val();
+    $.ajax({
+      type: "GET",
+      url: "/api/block_list",
+      data: { ardb_id },
+      dataType: "html",
+      beforeSend: function () {
+        // Show image container
+        $("#loader").show();
+        $("#display-content").hide();
+      },
+      success: function (result) {
+        var res = JSON.parse(result);
+        if (res.suc > 0) {
+          $("#block_id").empty();
+          $("#block_id").append(
+            $("<option>", {
+              value: "",
+              text: "Select Block",
+            })
+          );
+          $.each(res.msg, function (i, item) {
+            $("#block_id").append(
+              $("<option>", { value: item.block_id, text: item.block_name })
+            );
+          });
+        }
+      },
+      complete: function (data) {
+        // Hide image container
+        $("#loader").hide();
+        $("#display-content").show();
+      },
+    });
+  });
+</script>
+
+<script>
+  $("#block_id").on("change", function () {
+    var ardb_id = $("#ardb_id").val(),
+      block_id = $(this).val();
+    $.ajax({
+      type: "GET",
+      url: "/api/sa_list",
+      data: { ardb_id, block_id },
+      dataType: "html",
+      beforeSend: function () {
+        // Show image container
+        $("#loader").show();
+        $("#display-content").hide();
+      },
+      success: function (result) {
+        var res = JSON.parse(result);
+        if (res.suc > 0) {
+          $("#sa_id").empty();
+          $("#sa_id").append(
+            $("<option>", {
+              value: "",
+              text: "Select Service Area",
+            })
+          );
+          $.each(res.msg, function (i, item) {
+            $("#sa_id").append(
+              $("<option>", { value: item.sa_id, text: item.sa_name })
+            );
+          });
+        }
+      },
+      complete: function (data) {
+        // Hide image container
+        $("#loader").hide();
+        $("#display-content").show();
+      },
+    });
+  });
+</script>
+
+<script>
+  $("#sa_id").on("change", function () {
+    var ardb_id = $("#ardb_id").val(),
+      block_id = $('#block_id').val(),
+      sa_id = $(this).val();
+    $.ajax({
+      type: "GET",
+      url: "/api/vill_list",
+      data: { ardb_id, block_id, sa_id },
+      dataType: "html",
+      beforeSend: function () {
+        // Show image container
+        $("#loader").show();
+        $("#display-content").hide();
+      },
+      success: function (result) {
+        var res = JSON.parse(result);
+        if (res.suc > 0) {
+          $("#vill_id").empty();
+          $("#vill_id").append(
+            $("<option>", {
+              value: "",
+              text: "Select Village",
+            })
+          );
+          $.each(res.msg, function (i, item) {
+            $("#vill_id").append(
+              $("<option>", { value: item.vill_id, text: item.vill_name })
+            );
+          });
+        }
+      },
+      complete: function (data) {
+        // Hide image container
+        $("#loader").hide();
+        $("#display-content").show();
+      },
+    });
+  });
+</script>

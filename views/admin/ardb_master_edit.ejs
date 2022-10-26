@@ -1,0 +1,148 @@
+<%- include('../template/header'); %>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1><%= heading %></h1>
+        </div>
+      </div>
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <% if(message){ %>
+      <div
+        class="alert alert-<%= message.type; %> alert-dismissible fade show"
+        role="alert"
+      >
+        <strong><%= message.message; %></strong>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <% } %>
+      <!-- SELECT2 EXAMPLE -->
+      <div class="card card-default">
+        <div class="card-header">
+          <h3 class="card-title"><%= sub_heading %></h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <form action="/tnx_srch" method="post">
+            <div class="row">
+              <div class="col-md-5">
+                <div class="form-group row">
+                  <label for="ardb_code" class="col-sm-2 col-form-label"
+                    >Code</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="ardb_code"
+                      name="ardb_code"
+                      placeholder="ARDB Code"
+                      value="<%= ardb_data ? ardb_data.ardb_code : '' %>"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="form-group row">
+                  <label for="district" class="col-sm-2 col-form-label"
+                    >District</label
+                  >
+                  <div class="col-sm-10">
+                    <select name="district" id="district" class="form-control">
+                      <option>Default select</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5">
+                <div class="form-group row">
+                  <label for="ardb_name" class="col-sm-2 col-form-label"
+                    >Name</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="ardb_name"
+                      name="ardb_name"
+                      placeholder="ARDB Name"
+                      value="<%= ardb_data ? ardb_data.ardb_name : '' %>"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="form-group row">
+                  <label for="abv_name" class="col-sm-2 col-form-label"
+                    >Short Name</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="abv_name"
+                      name="abv_name"
+                      placeholder="Short Name"
+                      value="<%= ardb_data ? ardb_data.abv_name : '' %>"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-10">
+                <div class="form-group row">
+                  <label for="address" class="col-sm-1 col-form-label"
+                    >Address</label
+                  >
+                  <div class="col-sm-11">
+                    <textarea
+                      name="address"
+                      id="address"
+                      class="form-control"
+                      aria-label="With textarea"
+                    >
+<%= ardb_data ? ardb_data.address : '' %></textarea
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <center>
+              <button
+                type="submit"
+                class="btn btn-outline-success mt-4"
+                id="submit"
+              >
+                Save
+              </button>
+            </center>
+          </form>
+        </div>
+      </div>
+      <!-- /.card -->
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include('../template/footer'); %>
