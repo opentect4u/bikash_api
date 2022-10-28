@@ -1,5 +1,6 @@
 const express = require("express"),
-  adminRouter = express.Router();
+  adminRouter = express.Router(),
+  dateFormat = require("dateformat");
 
 const {
   getArdbList,
@@ -9,7 +10,22 @@ const {
   getUserList,
   getLoanDataReport,
 } = require("../controllers/adminController");
+const { adminLogin, userLogOut } = require("../controllers/userController");
 const { F_Insert, F_Select } = require("../models/MasterModule");
+
+adminRouter.use((req, res, next) => {
+  var url = req.path
+  var user = req.session.user
+  if (url == '/login' || user) {
+    next()
+  } else {
+    res.redirect('/admin/login')
+  }
+})
+
+adminRouter.get('/dashboard', (req, res) => {
+  res.render('dashboard/view')
+})
 
 adminRouter.get("/ardb_master", async (req, res) => {
   var id = req.query.id > 0 ? req.query.id : null;
@@ -233,6 +249,51 @@ adminRouter.post('/loan_data', async (req, res) => {
     sub_heading: "Loan Received Record",
     frm_dt, to_dt, loan_data: loan_data.suc > 0 ? loan_data.msg : null
   })
+})
+
+adminRouter.post('/update_user_status', async (req, res) => {
+  var data = req.body,
+    datetime = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss');
+  data['user'] = 'admin';
+  var table_name = 'md_user',
+    fields = `user_status = "${data.flag}", modified_by = "${data.user}", modified_dt = "${datetime}"`,
+    values = null,
+    whr = `user_id = ${data.user_id}`,
+    flag = 1;
+  var res_dt = await F_Insert(table_name, fields, values, whr, flag)
+  res.send(res_dt)
+})
+
+adminRouter.get('/login', (req, res) => {
+  res.render("login/login");
+})
+
+adminRouter.post('/login', async (req, res) => {
+  var data = req.body;
+  var res_dt = await adminLogin(data.user_id, data.password, 0, 0, 0)
+  if (res_dt.suc > 0) {
+    req.session.user = res_dt.msg[0]
+    res.redirect('/admin/dashboard')
+  } else {
+    req.session.message = { type: 'warning', message: 'Please check your user-id or password' };
+    res.redirect('/admin/login');
+  }
+  // console.log(res_dt);
+  // res.render("login/login");
+})
+
+adminRouter.get('/logout', async (req, res) => {
+  var user = req.session.user
+  var user_id = user.user_id,
+    rec_id = user.rec_id
+  var res_dt = await userLogOut(rec_id)
+  if (res_dt.suc > 0) {
+    req.session.destroy(() => {
+      res.redirect('/admin/login');
+    });
+  } else {
+    res.redirect('/admin/dashboard')
+  }
 })
 
 module.exports = { adminRouter };

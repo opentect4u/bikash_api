@@ -1,6 +1,10 @@
 const express = require("express"),
   apiRouter = express(),
-  dateformat = require("dateformat");
+  dateformat = require("dateformat"),
+  fs = require('fs'),
+  upload = require('express-fileupload');
+
+apiRouter.use(upload());
 
 const {
   getArdbList,
@@ -9,7 +13,7 @@ const {
   getVillMaster,
   getLoanData,
 } = require("../controllers/adminController");
-const { userLogin, userRegistration } = require("../controllers/userController");
+const { userLogin, userRegistration, userLogOut, saveParams, updateUserInfo, updatePass } = require("../controllers/userController");
 const { F_Insert } = require("../models/MasterModule");
 
 apiRouter.get("/ardb_list", async (req, res) => {
@@ -75,6 +79,12 @@ apiRouter.post('/loan_data_save', async (req, res) => {
   res.send(res_dt);
 })
 
+apiRouter.post('/save_params', async (req, res) => {
+  var data = req.body
+  var res_dt = await saveParams(data);
+  res.send(res_dt)
+})
+
 apiRouter.post('/login', async (req, res) => {
   var data = req.body;
   var user_id = data.user_id,
@@ -84,10 +94,35 @@ apiRouter.post('/login', async (req, res) => {
   res.send(res_dt);
 })
 
+apiRouter.post('/logout', async (req, res) => {
+  var data = req.body;
+  var sl_no = data.id
+  var res_dt = await userLogOut(sl_no);
+  res.send(res_dt)
+})
+
 apiRouter.post('/user_registration', async (req, res) => {
-  var data = req.query
+  var data = req.body
   var res_dt = await userRegistration(data)
   res.send(res_dt)
+})
+
+apiRouter.post('/user_update', async (req, res) => {
+  var data = req.body
+  var res_dt = await updateUserInfo(data)
+  res.send(res_dt);
+})
+
+apiRouter.post('/change_pass', async (req, res) => {
+  var data = req.body
+  var res_dt = await updatePass(data)
+  res.send(res_dt)
+})
+
+apiRouter.post('/save_pro_pic', async (req, res) => {
+  var files = req.files
+  var data = req.body
+  res.send({files, data})
 })
 
 module.exports = { apiRouter };

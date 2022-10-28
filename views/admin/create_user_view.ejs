@@ -1,11 +1,27 @@
 <%- include('../template/header'); %>
+<style>
+  #loader {
+    /* width: 600px; */
+    height: 450px;
+    margin: auto;
+  }
+
+  #loader.loading {
+    background: url(/dist/img/loader1.gif) no-repeat center center;
+    /* width: 32px; */
+    margin: auto;
+  }
+</style>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
-        <div class="col-sm-6">
+        <div class="col-md-12">
+          <div id="loader" class="loading img-center" style="display: none;"></div>
+        </div>
+        <div class="col-sm-6" id="display-content">
           <h1><%= heading %></h1>
         </div>
       </div>
@@ -17,17 +33,9 @@
   <section class="content">
     <div class="container-fluid">
       <% if(message){ %>
-      <div
-        class="alert alert-<%= message.type; %> alert-dismissible fade show"
-        role="alert"
-      >
+      <div class="alert alert-<%= message.type; %> alert-dismissible fade show" role="alert">
         <strong><%= message.message; %></strong>
-        <button
-          type="button"
-          class="close"
-          data-dismiss="alert"
-          aria-label="Close"
-        >
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -37,9 +45,9 @@
         <div class="card-header">
           <h3 class="card-title"><%= sub_heading %></h3>
           <div class="card-tools">
-            <a href="/admin/create_user_edit" class="btn btn-primary"
+            <!-- <a href="/admin/create_user_edit" class="btn btn-primary"
               >Add New</a
-            >
+            > -->
           </div>
         </div>
         <!-- /.card-header -->
@@ -50,9 +58,10 @@
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>ARDB</th>
+                    <!-- <th>ARDB</th> -->
                     <th>Name</th>
                     <th>User ID</th>
+                    <th>Email</th>
                     <th>User Type</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -62,18 +71,22 @@
                   <% if(user_list){ var i = 1; user_list.forEach((dt) => { %>
                   <tr>
                     <td><%= i %></td>
-                    <td><%= dt.ardb_name %></td>
+                    <!-- <td><%= //dt.ardb_name %></td> -->
                     <td><%= dt.user_name %></td>
                     <td><%= dt.user_id %></td>
+                    <td><%= dt.email_id %></td>
                     <td><%= dt.user_type != 'A' ? 'User' : 'Admin' %></td>
-                    <td><%= dt.user_status == 'A' ? 'Active' : (dt.user_status == 'D' ? 'De-Active' : 'Un-Approved') %></td>
+                    <td><span id="user_status_<%= i %>"><%= dt.user_status == 'A' ? 'Active' : (dt.user_status == 'D' ? 'De-Active' : 'Un-Approved') %></span></td>
                     <td>
-                      <a
-                        href="create_user_edit?id=<%= dt.sl_no %>"
-                        class="btn btn-primary"
-                      >
+                      <!-- <a href="create_user_edit?id=<%= dt.sl_no %>" class="btn btn-primary">
                         Edit
-                      </a>
+                      </a> -->
+                      <div class="form-group">
+                        <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                          <input type="checkbox" class="custom-control-input" id="catv_user_<%= i %>" name="catv_user" <%= dt.user_status == 'A' ? 'checked' : '' %> onchange="user_action(<%= i %>,<%= dt.user_id %>)">
+                          <label class="custom-control-label" for="catv_user_<%= i %>"></label>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                   <% i++; }) } %>
@@ -83,11 +96,7 @@
           </div>
 
           <center>
-            <button
-              type="button"
-              class="btn btn-outline-success mt-4"
-              onclick="printDiv()"
-            >
+            <button type="button" class="btn btn-outline-success mt-4" onclick="printDiv()">
               Print
             </button>
           </center>
@@ -103,7 +112,7 @@
 <%- include('../template/footer'); %>
 
 <script>
-  $(function () {
+  $(function() {
     // $("#example1").DataTable({
     // "responsive": true, "lengthChange": false, "autoWidth": false,
     // "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
@@ -120,6 +129,45 @@
   });
 </script>
 <script>
+  function user_action(id, user_id) {
+    var flag = 'U',
+      text = 'De-Active';
+    if ($('#catv_user_' + id).is(':checked')) {
+      flag = 'A'
+      text = 'Active'
+    } else {
+      flag = 'U';
+      text = 'De-Active';
+    }
+    $.ajax({
+      type: "POST",
+      url: "/admin/update_user_status",
+      data: {
+        flag,
+        user_id
+      },
+      dataType: 'html',
+      beforeSend: function() {
+        // Show image container
+        $("#loader").show();
+        $('#display-content').hide();
+      },
+      success: function(result) {
+        var res = JSON.parse(result);
+        // console.log(res);
+        if (res.suc > 0) {
+          $('#user_status_' + id).text(text)
+        }
+      },
+      complete: function(data) {
+        // Hide image container
+        $("#loader").hide();
+        $('#display-content').show();
+      }
+    });
+  }
+</script>
+<script>
   function printDiv() {
     var divToPrint = document.getElementById("divToPrint");
 
@@ -132,23 +180,23 @@
 
     WindowObject.document.writeln(
       "@media print { .center { text-align: center;}" +
-        "                                         .inline { display: inline; }" +
-        "                                         .underline { text-decoration: underline; }" +
-        "                                         .left { margin-left: 315px;} " +
-        "                                         .right { margin-right: 375px; display: inline; }" +
-        "                                          table { border-collapse: collapse; font-size: 10px;}" +
-        "                                          th, td { border: 1px solid black; border-collapse: collapse; padding: 6px;}" +
-        "                                           th, td { }" +
-        "                                         .border { border: 1px solid black; } " +
-        "                                         .bottom { bottom: 5px; width: 100%; position: fixed " +
-        "                                       " +
-        "                                   } } </style>"
+      "                                         .inline { display: inline; }" +
+      "                                         .underline { text-decoration: underline; }" +
+      "                                         .left { margin-left: 315px;} " +
+      "                                         .right { margin-right: 375px; display: inline; }" +
+      "                                          table { border-collapse: collapse; font-size: 10px;}" +
+      "                                          th, td { border: 1px solid black; border-collapse: collapse; padding: 6px;}" +
+      "                                           th, td { }" +
+      "                                         .border { border: 1px solid black; } " +
+      "                                         .bottom { bottom: 5px; width: 100%; position: fixed " +
+      "                                       " +
+      "                                   } } </style>"
     );
     WindowObject.document.writeln('</head><body onload="window.print()">');
     WindowObject.document.writeln(divToPrint.innerHTML);
     WindowObject.document.writeln("</body></html>");
     WindowObject.document.close();
-    setTimeout(function () {
+    setTimeout(function() {
       WindowObject.close();
     }, 10);
   }

@@ -29,7 +29,7 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  res.locals.active = req.path.split("/")[1];
+  res.locals.active = req.path.split("/")[2];
   res.locals.message = req.session.message;
   delete req.session.message;
   next();
@@ -37,7 +37,8 @@ app.use((req, res, next) => {
 
 app.get("/", (req, res) => {
   //   res.send("Hi Subham");
-  res.render("login/login");
+  // res.render("login/login");
+  res.redirect('/admin/login')
 });
 
 const { adminRouter } = require("./routes/adminRouter");
