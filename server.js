@@ -3,7 +3,8 @@ const express = require("express"),
   cors = require('cors'),
   session = require("express-session"),
   path = require("path"),
-  port = process.env.PORT || 3000;
+  port = process.env.PORT || 3000,
+  https = require("https");
 
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(__dirname + "/assets"));
@@ -30,6 +31,7 @@ app.use(
 
 app.use((req, res, next) => {
   res.locals.active = req.path.split("/")[2];
+  console.log(res.locals.active);
   res.locals.message = req.session.message;
   delete req.session.message;
   next();
@@ -55,3 +57,9 @@ app.listen(port, (err) => {
   if (err) console.log(err);
   else console.log(`App is running at port ${port}`);
 });
+
+// https
+//   .createServer(app)
+//   .listen(port, () => {
+//     console.log('server is runing at port 4000')
+//   });

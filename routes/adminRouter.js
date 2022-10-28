@@ -234,8 +234,8 @@ adminRouter.get("/create_user_edit", async (req, res) => {
 
 adminRouter.get('/loan_data', async (req, res) => {
   res.render('report/loan_data_in', {
-    heading: "Loan Received Record",
-    sub_heading: "Loan Received Record",
+    heading: "Recovery Record",
+    sub_heading: "Recovery Record",
   })
 })
 
@@ -245,8 +245,8 @@ adminRouter.post('/loan_data', async (req, res) => {
     to_dt = req.body.to_dt;
   var loan_data = await getLoanDataReport(ardb_id, frm_dt, to_dt)
   res.render('report/loan_data_out', {
-    heading: "Loan Received Record",
-    sub_heading: "Loan Received Record",
+    heading: "Recovery Record",
+    sub_heading: "Recovery Record",
     frm_dt, to_dt, loan_data: loan_data.suc > 0 ? loan_data.msg : null
   })
 })

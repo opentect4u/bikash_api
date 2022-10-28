@@ -100,7 +100,7 @@ module.exports = {
         var table_name = 'md_user',
             fields = `block_id = "${data.block_id}", sa_id = "${data.sa_id}", vill_id = "${data.vill_id}", modified_by = "${data.user}", modified_dt = "${datetime}"`,
             values = null,
-            whr = `user_id = ${data.user_id}`,
+            whr = `user_id = "${data.user_id}"`,
             flag = 1;
         return new Promise(async (resolve, reject) => {
             var res_dt = await F_Insert(table_name, fields, values, whr, flag)
@@ -177,6 +177,17 @@ module.exports = {
             } else {
                 res_dt = user_dt
             }
+            resolve(res_dt)
+        })
+    },
+    updateProPic: (data, filePath) => {
+        var table_name = 'md_user',
+            fields = `profile_pic = "${filePath}", modified_by = "${data.user}", modified_dt = "${datetime}"`,
+            values = null,
+            whr = `user_id = ${data.user_id}`,
+            flag = 1;
+        return new Promise(async (resolve, reject) => {
+            var res_dt = await F_Insert(table_name, fields, values, whr, flag)
             resolve(res_dt)
         })
     }

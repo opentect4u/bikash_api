@@ -85,8 +85,8 @@ module.exports = {
     });
   },
   getLoanData: (ardb_id, block_id, sa_id, vill_id, cust_id, loan_acc_id) => {
-    var select = "*",
-      table_name = 'td_loan_data',
+    var select = "a.*, IF((SELECT COUNT(*) FROM td_trans_dtls b WHERE a.ardb_cd=b.ardb_cd AND a.acc_num=b.acc_num AND a.cust_cd=b.cust_cd AND a.loan_acc_cd=b.loan_acc_cd) > 0, 'Y', 'N') paid_flag",
+      table_name = 'td_loan_data a',
       whr = `ardb_cd = ${ardb_id} AND 
       br_block_cd = "${block_id}" AND 
       service_area_cd = "${sa_id}" AND 
@@ -96,6 +96,15 @@ module.exports = {
       order = `ORDER BY cust_name`;
     return new Promise(async (resolve, reject) => {
       var res_dt = await F_Select(select, table_name, whr, order);
+      if (res_dt.suc > 0) {
+        for (let dt of res_dt.msg) {
+          select = `trans_dt, amount r_amt`
+          table_name = 'td_trans_dtls'
+          whr = `ardb_cd="${ardb_id}" AND acc_num="${dt.acc_num}" AND cust_cd="${dt.cust_cd}" AND loan_acc_cd="${dt.loan_acc_cd}"`
+          let tr_dt = await F_Select(select, table_name, whr, null);
+          dt['trans_dt'] = tr_dt.msg
+        }
+      }
       resolve(res_dt);
     });
   },

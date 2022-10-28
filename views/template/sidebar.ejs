@@ -2,13 +2,13 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4 main_sidebarCustom">
   <!-- Brand Logo -->
   <a href="/" class="brand-link navbar-danger navbarDangerCustom">
-    <img src="/dist/img/logoLogin.svg" alt="AdminLTE Logo" class="brand-image brandimageCustom" />
-    <span class="brand-text font-weight-light">EPORISEVA</span>
+    <img src="/dist/img/logo.jpg" alt="AdminLTE Logo" class="brand-image brandimageCustom" />
+    <span class="brand-text font-weight-light">BIKASH</span>
   </a>
   <!-- floating button -->
-  <a href="uploads/user_manual_eporiseva.pdf" target="_blank" class="float" data-toggle="tooltip" title="Click here to download user manual">
+  <!-- <a href="uploads/user_manual_eporiseva.pdf" target="_blank" class="float" data-toggle="tooltip" title="Click here to download user manual">
     <i class="fa fa-download my-float"></i>
-  </a>
+  </a> -->
 
   <!-- Sidebar -->
   <div class="sidebar sidebarCustom">
@@ -41,7 +41,7 @@
       <ul class="nav nav-pills nav-sidebar flex-column nav-compact nav-child-indent navCustomLeft" data-widget="treeview" role="menu" data-accordion="false">
         <!-- Add icons to the links using the .nav-icon class
        with font-awesome or any other icon font library -->
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-tachometer-alt"></i>
             <p>
@@ -81,12 +81,26 @@
               </a>
             </li>
           </ul>
+        </li> -->
+
+        <li class="nav-item">
+          <a href="/admin/dashboard" class="nav-link <%= (active=='dashboard') ? 'active' : ''; %>">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>Dashboard</p>
+          </a>
         </li>
 
         <li class="nav-item">
-          <a href="/admin/loan_data" class="nav-link">
+          <a href="/admin/create_user" class="nav-link <%= (active=='create_user') ? 'active' : ''; %>">
+            <i class="nav-icon fas fa-users"></i>
+            <p>User Maintenance</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="/admin/loan_data" class="nav-link <%= (active=='loan_data') ? 'active' : ''; %>">
             <i class="nav-icon fas fa-copy"></i>
-            <p>Loan Statement</p>
+            <p>Recovery</p>
           </a>
         </li>
 
