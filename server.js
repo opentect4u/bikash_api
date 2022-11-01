@@ -31,7 +31,6 @@ app.use(
 
 app.use((req, res, next) => {
   res.locals.active = req.path.split("/")[2];
-  console.log(res.locals.active);
   res.locals.message = req.session.message;
   delete req.session.message;
   next();
@@ -45,9 +44,11 @@ app.get("/", (req, res) => {
 
 const { adminRouter } = require("./routes/adminRouter");
 const { apiRouter } = require("./routes/apiRouter");
+const { tourRouter } = require("./routes/tourRouter");
 
 app.use("/admin", adminRouter);
 app.use("/api", apiRouter);
+app.use('/api', tourRouter);
 
 // app.get("/admin_master", (req, res) => {
 //   res.render("admin/ardb_master_view");
