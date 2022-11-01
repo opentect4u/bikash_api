@@ -112,7 +112,7 @@ module.exports = {
         var table_name = 'md_user',
             fields = `user_name = "${data.user_name}", email_id = "${data.email_id}", modified_by = "${data.user}", modified_dt = "${datetime}"`,
             values = null,
-            whr = `user_id = ${data.user_id}`,
+            whr = `user_id = "${data.user_id}"`,
             flag = 1;
         return new Promise(async (resolve, reject) => {
             var res_dt = await F_Insert(table_name, fields, values, whr, flag)
@@ -137,7 +137,7 @@ module.exports = {
                     var table_name = 'md_user',
                         fields = `password = "${pass}", modified_by = "${data.user}", modified_dt = "${datetime}"`,
                         values = null,
-                        whr = `user_id = ${data.user_id}`,
+                        whr = `user_id = "${data.user_id}"`,
                         flag = 1;
 
                     res_dt = await F_Insert(table_name, fields, values, whr, flag)
@@ -184,10 +184,26 @@ module.exports = {
         var table_name = 'md_user',
             fields = `profile_pic = "${filePath}", modified_by = "${data.user}", modified_dt = "${datetime}"`,
             values = null,
-            whr = `user_id = ${data.user_id}`,
+            whr = `user_id = "${data.user_id}"`,
             flag = 1;
         return new Promise(async (resolve, reject) => {
             var res_dt = await F_Insert(table_name, fields, values, whr, flag)
+            resolve(res_dt)
+        })
+    },
+    checkPhone: (user_id) => {
+        var table_name = 'md_user',
+            select = `COUNT(*) user`,
+            whr = `user_id = "${user_id}"`,
+            order = null;
+        return new Promise(async (resolve, reject) => {
+            var dt = await F_Select(select, table_name, whr, order)
+            var res_dt = '';
+            if (dt.suc > 0) {
+                res_dt = { suc: dt.msg[0].user > 0 ? 1 : 0, msg: dt.msg[0].user > 0 ? 'Number is already exist' : 'New Number' }
+            } else {
+                res_dt = dt;
+            }
             resolve(res_dt)
         })
     }

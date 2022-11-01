@@ -13,7 +13,7 @@ const {
   getVillMaster,
   getLoanData,
 } = require("../controllers/adminController");
-const { userLogin, userRegistration, userLogOut, saveParams, updateUserInfo, updatePass, updateProPic } = require("../controllers/userController");
+const { userLogin, userRegistration, userLogOut, saveParams, updateUserInfo, updatePass, updateProPic, checkPhone } = require("../controllers/userController");
 const { F_Insert } = require("../models/MasterModule");
 
 apiRouter.get("/ardb_list", async (req, res) => {
@@ -153,6 +153,12 @@ apiRouter.post('/save_pro_pic', async (req, res) => {
   } else {
     res.send({ suc: 0, msg: "No file selected" })
   }
+})
+
+apiRouter.get('/check_phone', async (req, res) => {
+  var data = req.query
+  var res_dt = await checkPhone(data.user_id)
+  res.send(res_dt)
 })
 
 module.exports = { apiRouter };

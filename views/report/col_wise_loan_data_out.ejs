@@ -4,6 +4,10 @@
     text-align: center;
     vertical-align: middle;
   }
+
+  #example2 tr td {
+    vertical-align: middle;
+  }
 </style>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -53,25 +57,37 @@
                   <% var i=1; 
                   if(loan_data){
                     var tot_amt = 0;
-                  loan_data.forEach((dt)=> {
-                    tot_amt += dt.r_amt; %>
+                  loan_data.forEach((dt)=> { %>
                   <tr>
-                    <td><%= i; %></td>
-                    <td><%= dt.cust_name; %></td>
-                    <td><%= dt.acc_num; %></td>
-                    <td><%= dt.loan_acc_name; %></td>
-                    <td><%= dt.sector; %></td>
-                    <td><%= dt.lf_no; %></td>
-                    <td><%= dt.r_amt; %></td>
-                    <td><%= new Date(dt.updated_dt).toLocaleString('en-IN'); %></td>
+                    <td rowspan="<%= dt.trans_dt.length + 1 %>"><%= i; %></td>
+                    <td rowspan="<%= dt.trans_dt.length + 1 %>"><%= dt.cust_name; %></td>
+                    <td rowspan="<%= dt.trans_dt.length + 1 %>"><%= dt.acc_num; %></td>
+                    <td rowspan="<%= dt.trans_dt.length + 1 %>"><%= dt.loan_acc_name; %></td>
+                    <td rowspan="<%= dt.trans_dt.length + 1 %>"><%= dt.sector; %></td>
+                    <td rowspan="<%= dt.trans_dt.length + 1 %>"><%= dt.lf_no; %></td>
                   </tr>
+                  <% if(dt.trans_dt.length > 0){
+                       dt.trans_dt.forEach((t_dt) => {
+                        tot_amt += t_dt.r_amt; %>
+                  <tr>
+                    <td><%= t_dt.r_amt; %></td>
+                    <td><%= new Date(t_dt.trans_dt).toLocaleString('en-IN'); %></td>
+                  </tr>
+                  <% })} else{ %>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <% } %>
                   <% i++; })%>
                   <tr>
                     <td colspan="6" style="text-align: center;"><b>Total:</b></td>
                     <td colspan="2"><b><%= tot_amt %></b></td>
                   </tr>
                   <% }else{ %>
-                  <td colspan="8" class="text-center">No Data Found</td>
+                  <tr>
+                    <td colspan="8" class="text-center">No Data Found</td>
+                  </tr>
                   <% } %>
                 </tbody>
               </table>

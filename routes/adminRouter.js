@@ -9,6 +9,7 @@ const {
   getVillMaster,
   getUserList,
   getLoanDataReport,
+  getCollectionWiseRecovery,
 } = require("../controllers/adminController");
 const { adminLogin, userLogOut } = require("../controllers/userController");
 const { F_Insert, F_Select } = require("../models/MasterModule");
@@ -251,6 +252,26 @@ adminRouter.post('/loan_data', async (req, res) => {
   })
 })
 
+adminRouter.get('/coll_wise_loan_data', async (req, res) => {
+  res.render('report/col_wise_loan_data_in', {
+    heading: "Collection Wise Recovery Record",
+    sub_heading: "Collection Wise Recovery Record"
+  })
+})
+
+adminRouter.post('/coll_wise_loan_data', async (req, res) => {
+  var ardb_id = req.session.user.ardb_id,
+    frm_dt = req.body.frm_dt,
+    to_dt = req.body.to_dt;
+  var loan_data = await getCollectionWiseRecovery(ardb_id, frm_dt, to_dt)
+  // console.log(loan_data);
+  res.render('report/col_wise_loan_data_out', {
+    heading: "Collection Wise Recovery Record",
+    sub_heading: "Collection Wise Recovery Record",
+    frm_dt, to_dt, loan_data: loan_data.suc > 0 ? loan_data.msg : null
+  })
+})
+
 adminRouter.post('/update_user_status', async (req, res) => {
   var data = req.body,
     datetime = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss');
@@ -258,7 +279,7 @@ adminRouter.post('/update_user_status', async (req, res) => {
   var table_name = 'md_user',
     fields = `user_status = "${data.flag}", modified_by = "${data.user}", modified_dt = "${datetime}"`,
     values = null,
-    whr = `user_id = ${data.user_id}`,
+    whr = `user_id = "${data.user_id}"`,
     flag = 1;
   var res_dt = await F_Insert(table_name, fields, values, whr, flag)
   res.send(res_dt)

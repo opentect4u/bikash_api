@@ -6,7 +6,7 @@ module.exports = {
   getArdbList: (id) => {
     var select = "ardb_code, district, ardb_name, address, abv_name",
       table_name = "md_ardb_master",
-      whr = id > 0 ? `ardb_code = "${id}"` : null,
+      whr = id > 0 ? `ardb_code = "${id}"` : 'order_flag = "Y"',
       order = null;
     return new Promise(async (resolve, reject) => {
       var res_dt = await F_Select(select, table_name, whr, order);
@@ -109,12 +109,37 @@ module.exports = {
     });
   },
   getLoanDataReport: (ardb_id, frm_dt, to_dt) => {
-    var select = "cust_cd, cust_name, loan_acc_name, sector, activity, lf_no, paid_flag, r_amt, updated_by, updated_dt",
-      table_name = 'td_loan_data',
-      whr = `ardb_cd = ${ardb_id} AND paid_flag = "Y" AND DATE(updated_dt) BETWEEN "${frm_dt}" AND "${to_dt}"`,
-      order = `ORDER BY cust_name`;
+    var select = "a.cust_cd, a.cust_name, a.acc_num, a.loan_acc_name, a.sector, a.activity, a.lf_no, IF(SUM(b.amount) > 0, 'Y', 'N') paid_flag, SUM(b.amount) r_amt, b.created_by updated_by, b.created_dt updated_dt",
+      table_name = 'td_loan_data a, td_trans_dtls b',
+      whr = `a.ardb_cd=b.ardb_cd AND a.acc_num=b.acc_num AND a.cust_cd=b.cust_cd AND a.loan_acc_cd=b.loan_acc_cd
+      AND a.ardb_cd = ${ardb_id} AND DATE(b.trans_dt) BETWEEN "${frm_dt}" AND "${to_dt}"`,
+      order = `GROUP BY a.ardb_cd, a.acc_num, a.cust_cd, a.loan_acc_cd ORDER BY a.cust_name`;
     return new Promise(async (resolve, reject) => {
       var res_dt = await F_Select(select, table_name, whr, order);
+      resolve(res_dt);
+    });
+  },
+  getCollectionWiseRecovery: (ardb_id, frm_dt, to_dt) => {
+    var select = "a.cust_cd, a.cust_name, a.acc_num, a.loan_acc_cd, a.loan_acc_name, a.sector, a.activity, a.lf_no",
+      table_name = 'td_loan_data a, td_trans_dtls b',
+      whr = `a.ardb_cd=b.ardb_cd AND a.acc_num=b.acc_num AND a.cust_cd=b.cust_cd AND a.loan_acc_cd=b.loan_acc_cd
+      AND a.ardb_cd = "${ardb_id}"
+      AND CAST(a.data_imp_dt as DATE) = (select MAX(CAST(data_imp_dt as DATE))from td_loan_data)
+      AND DATE(b.trans_dt) BETWEEN "${frm_dt}" AND "${to_dt}"`,
+      order = `GROUP BY a.ardb_cd, a.acc_num, a.cust_cd, a.loan_acc_cd
+      HAVING SUM(b.amount) > 0
+      ORDER BY a.cust_name`;
+    return new Promise(async (resolve, reject) => {
+      var res_dt = await F_Select(select, table_name, whr, order);
+      if (res_dt.suc > 0) {
+        for (let dt of res_dt.msg) {
+          select = `trans_dt, amount r_amt`
+          table_name = 'td_trans_dtls'
+          whr = `ardb_cd="${ardb_id}" AND acc_num="${dt.acc_num}" AND cust_cd="${dt.cust_cd}" AND loan_acc_cd="${dt.loan_acc_cd}"`
+          let tr_dt = await F_Select(select, table_name, whr, null);
+          dt['trans_dt'] = tr_dt.msg
+        }
+      }
       resolve(res_dt);
     });
   }
