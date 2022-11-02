@@ -19,8 +19,8 @@ tourRouter.post('/tour_diary', async (req, res) => {
     var datetime = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss');
     var table_name = 'td_tour_diary',
         fields = data.sl_no > 0 ? `diary_title = "${data.diary_title}", diary_date = "${data.diary_date}", diary_note = "${data.diary_note}", modified_by = "${data.user}", modified_dt = "${datetime}"` :
-            `(user_id, diary_title, diary_date, diary_note, created_by, created_dt)`,
-        values = `("${data.user_id}", "${data.diary_title}", "${data.diary_date}", "${data.diary_note}", "${data.user}", "${datetime}")`,
+            `(ardb_id, user_id, diary_title, diary_date, diary_note, created_by, created_dt)`,
+        values = `("${data.ardb_id}", "${data.user_id}", "${data.diary_title}", "${data.diary_date}", "${data.diary_note}", "${data.user}", "${datetime}")`,
         whr = data.sl_no > 0 ? `sl_no = ${data.sl_no}` : null,
         flag = data.sl_no > 0 ? 1 : 0;
     var res_dt = await F_Insert(table_name, fields, values, whr, flag)
@@ -42,8 +42,8 @@ tourRouter.post('/tour_prog', async (req, res) => {
     var datetime = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss');
     var table_name = 'td_tour_program',
         fields = data.sl_no > 0 ? `prog_title = "${data.prog_title}", frm_dt = "${data.frm_dt}", to_dt = "${data.to_dt}", prog_desc = "${data.prog_desc}", modified_by = "${data.user}", modified_dt = "${datetime}"` :
-            `(user_id, prog_title, frm_dt, to_dt, prog_desc, created_by, created_dt)`,
-        values = `("${data.user_id}", "${data.prog_title}", "${data.frm_dt}", "${data.to_dt}", "${data.prog_desc}", "${data.user}", "${datetime}")`,
+            `(ardb_id, user_id, prog_title, frm_dt, to_dt, prog_desc, created_by, created_dt)`,
+        values = `("${data.ardb_id}", "${data.user_id}", "${data.prog_title}", "${data.frm_dt}", "${data.to_dt}", "${data.prog_desc}", "${data.user}", "${datetime}")`,
         whr = data.sl_no > 0 ? `sl_no = ${data.sl_no}` : null,
         flag = data.sl_no > 0 ? 1 : 0;
     var res_dt = await F_Insert(table_name, fields, values, whr, flag)

@@ -72,11 +72,11 @@ module.exports = {
       resolve(res_dt);
     });
   },
-  getUserList: (id, user_id) => {
+  getUserList: (user_id) => {
     var select =
-      "a.user_id, a.password, a.user_type, a.ardb_id, b.ardb_name, a.block_id, a.sa_id, a.vill_id, a.user_name, a.email_id, a.profile_pic, a.user_status",
+      "a.user_id, a.password, a.user_type, a.ardb_id, b.ardb_name, a.block_id, a.sa_id, a.vill_id, a.user_name, a.email_id, a.profile_pic, a.user_status, a.emp_code, a.catg, a.desig",
       table_name = "md_user a, md_ardb_master b",
-      whr = `a.ardb_id=b.ardb_code ${id > 0 ? 'AND a.id="' + id + '"' : ""} ${user_id > 0 ? 'AND a.user_id="' + user_id + '"' : ""
+      whr = `a.ardb_id=b.ardb_code ${user_id > 0 ? 'AND a.user_id="' + user_id + '"' : ""
         }`,
       order = null;
     return new Promise(async (resolve, reject) => {

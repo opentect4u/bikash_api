@@ -44,11 +44,15 @@ app.get("/", (req, res) => {
 
 const { adminRouter } = require("./routes/adminRouter");
 const { apiRouter } = require("./routes/apiRouter");
+const { attRouter } = require("./routes/attendanceRouter");
+const { reportRouter } = require("./routes/reportRouter");
 const { tourRouter } = require("./routes/tourRouter");
 
 app.use("/admin", adminRouter);
 app.use("/api", apiRouter);
 app.use('/api', tourRouter);
+app.use('/admin', reportRouter)
+app.use('/api', attRouter)
 
 // app.get("/admin_master", (req, res) => {
 //   res.render("admin/ardb_master_view");

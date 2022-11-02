@@ -65,6 +65,7 @@
                     <th>User Type</th>
                     <th>Status</th>
                     <th>Action</th>
+                    <th>Edit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -78,15 +79,17 @@
                     <td><%= dt.user_type != 'A' ? 'User' : 'Admin' %></td>
                     <td><span id="user_status_<%= i %>"><%= dt.user_status == 'A' ? 'Active' : (dt.user_status == 'D' ? 'De-Active' : 'Un-Approved') %></span></td>
                     <td>
-                      <!-- <a href="create_user_edit?id=<%= dt.sl_no %>" class="btn btn-primary">
-                        Edit
-                      </a> -->
                       <div class="form-group">
                         <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
                           <input type="checkbox" class="custom-control-input" id="catv_user_<%= i %>" name="catv_user" <%= dt.user_status == 'A' ? 'checked' : '' %> onchange="user_action(<%= i %>,<%= dt.user_id %>)">
                           <label class="custom-control-label" for="catv_user_<%= i %>"></label>
                         </div>
                       </div>
+                    </td>
+                    <td>
+                      <a href="create_user_edit?id=<%= dt.user_id %>" class="btn btn-primary">
+                        Edit
+                      </a>
                     </td>
                   </tr>
                   <% i++; }) } %>

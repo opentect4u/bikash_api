@@ -192,46 +192,40 @@ adminRouter.get("/create_user", async (req, res) => {
 
 adminRouter.get("/create_user_edit", async (req, res) => {
   var data = req.query,
-    id = data.id,
-    user_id = data.user_id;
+    user_id = data.id;
   var user_data = null,
     vill_list = null,
     sa_list = null,
     block_list = null;
-  if (id > 0) {
-    var res_dt = await getUserList(id, user_id);
+  if (user_id > 0) {
+    var res_dt = await getUserList(user_id);
     user_data = res_dt.suc > 0 ? res_dt.msg[0] : null;
-    block_list = await getBlockMaster(null, user_data.ardb_id);
-    sa_list = await getServiceAreaMaster(
-      null,
-      user_data.ardb_id,
-      user_data.block_id
-    );
-    vill_list = await getVillMaster(
-      null,
-      user_data.ardb_id,
-      user_data.block_id,
-      user_data.sa_id
-    );
-    // console.log(sa_data);
   }
-
-  var ardb_list = await getArdbList(null);
 
   res.render("admin/create_user_edit", {
     user_data,
     heading: "User Master",
     sub_heading: "User Entry",
-    ardb_list: ardb_list.suc > 0 ? ardb_list.msg : null,
-    block_list: block_list
-      ? block_list.suc > 0
-        ? block_list.msg
-        : null
-      : null,
-    sa_list: sa_list ? (sa_list.suc > 0 ? sa_list.msg : null) : null,
-    vill_list: vill_list ? (vill_list.suc > 0 ? vill_list.msg : null) : null,
   });
 });
+
+adminRouter.post('/create_user_edit', async (req, res) => {
+  var data = req.body
+  console.log(data);
+  var datetime = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss'),
+    user = req.session.user.user_name;
+  var table_name = 'md_user',
+    fields = `user_name = "${data.user_name}", emp_code = "${data.emp_code}", catg = "${data.catg_id}", desig = "${data.desig}", modified_by = "${user}", modified_dt = "${datetime}"`,
+    values = null,
+    whr = `user_id = "${data.user_id}"`,
+    flag = 1;
+  var res_dt = await F_Insert(table_name, fields, values, whr, flag)
+  if (res_dt.suc > 0) {
+    res.redirect('create_user')
+  } else {
+    res.redirect('create_user')
+  }
+})
 
 adminRouter.get('/loan_data', async (req, res) => {
   res.render('report/loan_data_in', {
